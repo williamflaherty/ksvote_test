@@ -1,0 +1,51 @@
+<html>
+<body>
+ <div>
+  <h1>KSVotes.org test</h1>
+   <form id="ksvotes" method="POST" action="https://www.ksvotes.org/ref?ref=wiki-example">
+    <div>
+     <input name="name_first" value="" > First Name
+    </div>
+    <div>
+     <input name="name_last" value="" > Last Name
+    </div>
+    <div>
+     <input name="dob" value="" placeholder="mm/dd/yyyy"> DOB
+    </div>
+    <div>
+     <input name="email" value="" placeholder="you@example.com" type="email"> Email
+    </div>
+    <div>
+     <input name="phone" value="" placeholder="555-555-5555" type="tel"> Phone
+    </div>
+
+    <button>Submit</button>
+ </div>
+
+ <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+ <script>
+   let $form = $('#ksvotes');
+   $form.on('submit', function(ev, opts) {
+     let options = opts || {};
+     if (!options.payload_saved) {
+       let $payload = $form.serialize();
+
+       // pause our ksvotes form submit to save the data locally
+       ev.preventDefault();
+
+       // send the data to our own server
+       $.ajax({
+         method: 'POST', // IMPORTANT to keep PII out of your server logs
+         data: $payload,
+         complete: function(data) {
+           // pick up where we left off and continue to ksvotes
+           $(ev.currentTarget).trigger('submit', { 'payload_saved': true });
+         }
+       });
+     } else {
+       alert("Sending data to KSVotes!");
+     }
+   });
+ </script>
+</body>
+</html>
